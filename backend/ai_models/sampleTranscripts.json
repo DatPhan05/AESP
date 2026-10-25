@@ -1,0 +1,27 @@
+[
+  {
+    "topic": "Daily Routine",
+    "text": "Every morning I wake up early, make coffee, and plan my working schedule for the entire day.",
+    "level": 1
+  },
+  {
+    "topic": "Travel & Exploration",
+    "text": "Last summer, I traveled to Da Nang city and experienced beautiful coastal landscapes with warm local hospitality.",
+    "level": 2
+  },
+  {
+    "topic": "Technology & AI",
+    "text": "Machine learning algorithms have demonstrated remarkable capabilities in speech processing and language translation.",
+    "level": 3
+  },
+  {
+    "topic": "Health & Sports",
+    "text": "Engaging in cardiovascular workouts three times a week significantly improves heart health and mental stamina.",
+    "level": 2
+  },
+  {
+    "topic": "Food & Cooking",
+    "text": "Traditional Vietnamese cuisine balances fresh herbs, savory broths, and balanced seasonings to create wholesome meals.",
+    "level": 2
+  }
+]

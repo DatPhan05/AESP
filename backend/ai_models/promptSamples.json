@@ -1,0 +1,106 @@
+{
+  "level_1": [
+    {
+      "topic": "Daily Routine",
+      "prompt": "I wake up at seven o'clock every morning and eat breakfast.",
+      "word_count": 11,
+      "difficulty": "easy",
+      "phonetic_focus": ["/v/", "/θ/"]
+    },
+    {
+      "topic": "Family & Friends",
+      "prompt": "My best friend is friendly and always helps me study English.",
+      "word_count": 11,
+      "difficulty": "easy",
+      "phonetic_focus": ["/f/", "/st/"]
+    },
+    {
+      "topic": "Hobbies",
+      "prompt": "In my free time, I love listening to pop music and reading books.",
+      "word_count": 14,
+      "difficulty": "easy",
+      "phonetic_focus": ["/ŋ/", "/b/"]
+    },
+    {
+      "topic": "Food & Drinks",
+      "prompt": "I enjoy drinking fresh orange juice and eating warm noodle soup.",
+      "word_count": 11,
+      "difficulty": "easy",
+      "phonetic_focus": ["/dʒ/", "/ʃ/"]
+    },
+    {
+      "topic": "Weather & Seasons",
+      "prompt": "Today the weather is sunny and cool, so I want to walk outside.",
+      "word_count": 13,
+      "difficulty": "easy",
+      "phonetic_focus": ["/w/", "/s/"]
+    }
+  ],
+  "level_2": [
+    {
+      "topic": "Travel & Exploration",
+      "prompt": "Traveling to historical cities allows us to appreciate diverse cultures and broaden our understanding of the world.",
+      "word_count": 18,
+      "difficulty": "medium",
+      "phonetic_focus": ["/tr/", "/ʃ/"]
+    },
+    {
+      "topic": "Technology & Daily Life",
+      "prompt": "Smartphones have revolutionized interpersonal communication, enabling instant connections with people regardless of geographical distance.",
+      "word_count": 16,
+      "difficulty": "medium",
+      "phonetic_focus": ["/v/", "/dʒ/"]
+    },
+    {
+      "topic": "Health & Lifestyle",
+      "prompt": "Maintaining a balanced diet combined with regular physical exercise significantly boosts both mental clarity and energy levels.",
+      "word_count": 18,
+      "difficulty": "medium",
+      "phonetic_focus": ["/b/", "/z/"]
+    },
+    {
+      "topic": "Education & Career",
+      "prompt": "Developing effective teamwork skills and critical thinking is essential for succeeding in competitive modern workplaces.",
+      "word_count": 16,
+      "difficulty": "medium",
+      "phonetic_focus": ["/k/", "/ŋ/"]
+    },
+    {
+      "topic": "Environment & Nature",
+      "prompt": "Protecting endangered wildlife habitats requires collective efforts from communities, governments, and international organizations.",
+      "word_count": 14,
+      "difficulty": "medium",
+      "phonetic_focus": ["/pr/", "/t/"]
+    }
+  ],
+  "level_3": [
+    {
+      "topic": "Artificial Intelligence & Ethics",
+      "prompt": "The rapid advancement of artificial intelligence necessitates rigorous ethical frameworks to safeguard human autonomy, privacy, and social equity in technological deployment.",
+      "word_count": 22,
+      "difficulty": "hard",
+      "phonetic_focus": ["/ʃ/", "/θ/"]
+    },
+    {
+      "topic": "Globalization & Economy",
+      "prompt": "While globalization has accelerated economic interdependence and cultural exchange, it simultaneously poses intricate challenges regarding socioeconomic inequality and sustainable resource management.",
+      "word_count": 22,
+      "difficulty": "hard",
+      "phonetic_focus": ["/z/", "/dʒ/"]
+    },
+    {
+      "topic": "Psychology & Cognitive Science",
+      "prompt": "Cultivating emotional resilience and metacognitive awareness empowers individuals to navigate complex interpersonal dilemmas and maintain psychological well-being under chronic stress.",
+      "word_count": 21,
+      "difficulty": "hard",
+      "phonetic_focus": ["/s/", "/t/"]
+    },
+    {
+      "topic": "Urbanization & Sustainability",
+      "prompt": "Sustainable urban development demands architectural innovation, renewable energy infrastructure, and comprehensive public transit systems to mitigate environmental degradation.",
+      "word_count": 18,
+      "difficulty": "hard",
+      "phonetic_focus": ["/v/", "/st/"]
+    }
+  ]
+}
