@@ -11,7 +11,7 @@ import "../styles/home.css";
 import atmLogo from "../assets/payments/ATM.png";
 import paypalLogo from "../assets/payments/Paypal.png";
 import momoLogo from "../assets/payments/Momo.png";
-import zalopayLogo from "../assets/payments/Zalopay.png";
+import zalopayLogo from "../assets/payments/ZaloPay.png";
 import mentorImage from "../assets/images/mentor-intro.png";
 import viettelLogo from "../assets/partners/viettel.png";
 import vibLogo from "../assets/partners/VIB.jpg";
