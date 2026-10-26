@@ -256,10 +256,7 @@ export default function Login({ onLogin }) {
                 <button
                   type="button"
                   className="help-link"
-                  onClick={() => {
-                    resetForgotPassword();
-                    setMode("forgot-step1");
-                  }}
+                  onClick={() => navigate("/forgot-password")}
                 >
                   Quên mật khẩu?
                 </button>

@@ -8,6 +8,7 @@ import GuestRoute from "../components/GuestRoute";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import ForgotPassword from "../pages/ForgotPassword";
 import ProfilePage from "../pages/Profile";
 import NotFound from "../pages/NotFound";
 import CommunicateCenter from "../pages/CommunicateCenter";
@@ -61,6 +62,14 @@ export default function AppRoutes() {
         element={
           <GuestRoute>
             <Register />
+          </GuestRoute>
+        }
+      />
+      <Route
+        path="/forgot-password"
+        element={
+          <GuestRoute>
+            <ForgotPassword />
           </GuestRoute>
         }
       />
