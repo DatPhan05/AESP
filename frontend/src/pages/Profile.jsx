@@ -54,6 +54,13 @@ export default function ProfilePage() {
   const [savingSecurityQuestion, setSavingSecurityQuestion] = useState(false);
   const [securityQuestionError, setSecurityQuestionError] = useState("");
 
+  // Edit profile states
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editPhone, setEditPhone] = useState("");
+  const [editDob, setEditDob] = useState("");
+  const [savingProfile, setSavingProfile] = useState(false);
+
   // Load user data
   useEffect(() => {
     async function loadUserData() {
@@ -274,6 +281,35 @@ export default function ProfilePage() {
     }
   }
 
+  async function handleSaveProfile(e) {
+    e.preventDefault();
+    if (!editName.trim()) {
+      alert("Họ tên không được để trống");
+      return;
+    }
+
+    setSavingProfile(true);
+    try {
+      const res = await api.put("/users/me", {
+        name: editName.trim(),
+        phone: editPhone.trim() || null,
+        dob: editDob || null
+      });
+
+      if (res.data?.user) {
+        const updated = res.data.user;
+        setUser(prev => ({ ...prev, ...updated }));
+        saveAuth({ ...auth, user: { ...auth.user, ...updated } });
+      }
+      setEditingProfile(false);
+      alert("✅ Cập nhật thông tin cá nhân thành công");
+    } catch (err) {
+      alert(err?.response?.data?.message || "Lỗi khi cập nhật thông tin cá nhân");
+    } finally {
+      setSavingProfile(false);
+    }
+  }
+
   async function handleChangeSecurityQuestion(e) {
     e.preventDefault();
     // TODO: Implement security question update when schema is ready
@@ -347,13 +383,81 @@ export default function ProfilePage() {
 
         {/* Thông tin chi tiết */}
         <div className="profile-details">
-          <div className="info-row"><strong>Họ tên:</strong> {user.name || "-"}</div>
-          <div className="info-row"><strong>Số điện thoại:</strong> {user.phone || "-"}</div>
-          <div className="info-row"><strong>Email:</strong> {user.email || "-"}</div>
-          <div className="info-row">
-            <strong>Ngày sinh:</strong>{" "}
-            {user.dob ? new Date(user.dob).toLocaleDateString("vi-VN") : "Chưa cập nhật"}
-          </div>
+          {editingProfile ? (
+            <form onSubmit={handleSaveProfile} style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
+              <div className="field">
+                <label style={{ display: "block", marginBottom: 4, fontWeight: 600 }}>Họ và tên *</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  placeholder="Nhập họ và tên"
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid #cbd5e1" }}
+                />
+              </div>
+              <div className="field">
+                <label style={{ display: "block", marginBottom: 4, fontWeight: 600 }}>Số điện thoại</label>
+                <input
+                  type="tel"
+                  className="input"
+                  value={editPhone}
+                  onChange={(e) => setEditPhone(e.target.value)}
+                  placeholder="0987654321"
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid #cbd5e1" }}
+                />
+              </div>
+              <div className="field">
+                <label style={{ display: "block", marginBottom: 4, fontWeight: 600 }}>Ngày sinh</label>
+                <input
+                  type="date"
+                  className="input"
+                  value={editDob}
+                  onChange={(e) => setEditDob(e.target.value)}
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid #cbd5e1" }}
+                />
+              </div>
+              <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+                <button type="submit" className="btn-primary btn-sm" disabled={savingProfile}>
+                  {savingProfile ? "Đang lưu..." : "Lưu thay đổi"}
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary btn-sm"
+                  onClick={() => setEditingProfile(false)}
+                  disabled={savingProfile}
+                >
+                  Hủy
+                </button>
+              </div>
+            </form>
+          ) : (
+            <>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <span style={{ fontWeight: 700, fontSize: 16, color: "#0f172a" }}>Thông tin tài khoản</span>
+                <button
+                  type="button"
+                  className="btn-link"
+                  style={{ fontSize: 13, fontWeight: 600 }}
+                  onClick={() => {
+                    setEditName(user.name || "");
+                    setEditPhone(user.phone || "");
+                    setEditDob(user.dob ? new Date(user.dob).toISOString().split("T")[0] : "");
+                    setEditingProfile(true);
+                  }}
+                >
+                  ✏️ Chỉnh sửa thông tin
+                </button>
+              </div>
+              <div className="info-row"><strong>Họ tên:</strong> {user.name || "-"}</div>
+              <div className="info-row"><strong>Số điện thoại:</strong> {user.phone || "-"}</div>
+              <div className="info-row"><strong>Email:</strong> {user.email || "-"}</div>
+              <div className="info-row">
+                <strong>Ngày sinh:</strong>{" "}
+                {user.dob ? new Date(user.dob).toLocaleDateString("vi-VN") : "Chưa cập nhật"}
+              </div>
+            </>
+          )}
           
           {/* Bio (cho mentor) - có thể edit trực tiếp */}
           {(role === "mentor" || user.role?.toLowerCase() === "mentor") && (
