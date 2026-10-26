@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { login as apiLogin } from "../services/authService";
 import { saveAuth } from "../utils/auth";
 import api from "../api.js";
+import { Alert } from "../components/common";
 import "../styles/login.css";
 
 import logo from "../assets/images/logo.png";
@@ -264,8 +265,20 @@ export default function Login({ onLogin }) {
                 </button>
               </div>
 
-              {error && <div className="error">{error}</div>}
-              {message && <div className="note">{message}</div>}
+              {error && (
+                <div style={{ marginBottom: 16 }}>
+                  <Alert type="error" onClose={() => setError("")}>
+                    {error}
+                  </Alert>
+                </div>
+              )}
+              {message && (
+                <div style={{ marginBottom: 16 }}>
+                  <Alert type="success" onClose={() => setMessage("")}>
+                    {message}
+                  </Alert>
+                </div>
+              )}
 
               <button
                 className={`button ${loading ? "loading" : ""}`}
