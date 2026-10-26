@@ -132,3 +132,24 @@ export async function markAllAsRead(userId) {
   return result.rows;
 }
 
+export async function findNotificationById(id, userId) {
+  const sql = `
+    SELECT n.*, u.name as related_user_name
+    FROM notifications n
+    LEFT JOIN users u ON n.related_user_id = u.id
+    WHERE n.id = $1 AND ($2::int IS NULL OR n.user_id = $2)
+  `;
+  const result = await pool.query(sql, [id, userId || null]);
+  return result.rows[0];
+}
+
+export async function deleteNotification(id, userId) {
+  const sql = `
+    DELETE FROM notifications
+    WHERE id = $1 AND ($2::int IS NULL OR user_id = $2)
+    RETURNING id
+  `;
+  const result = await pool.query(sql, [id, userId || null]);
+  return result.rowCount > 0;
+}
+

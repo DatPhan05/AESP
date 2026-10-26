@@ -44,13 +44,60 @@ export async function markAsRead(req, res) {
   }
 }
 
-export async function markAllAsRead(req, res) {
+export async function getNotificationById(req, res) {
   try {
     const userId = req.user.id || req.user.userId;
-    const notifications = await notificationService.markAllAsRead(userId);
-    res.json({ count: notifications.length });
+    const { id } = req.params;
+    const notification = await notificationService.findNotificationById(id, userId);
+    if (!notification) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+    res.json({ notification });
   } catch (err) {
-    console.error("markAllAsRead error:", err);
+    console.error("getNotificationById error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+export async function createNotification(req, res) {
+  try {
+    const currentUserId = req.user.id || req.user.userId;
+    const { userId, type, title, message, linkUrl, relatedPostId, relatedCommentId, relatedUserId } = req.body;
+
+    const targetUserId = userId || currentUserId;
+    if (!targetUserId || !title || !message) {
+      return res.status(400).json({ message: "Vui lòng cung cấp đầy đủ thông tin thông báo (title, message)" });
+    }
+
+    const created = await notificationService.createNotification({
+      userId: targetUserId,
+      type: type || "system",
+      title,
+      message,
+      linkUrl,
+      relatedPostId,
+      relatedCommentId,
+      relatedUserId
+    });
+
+    res.status(201).json({ success: true, notification: created });
+  } catch (err) {
+    console.error("createNotification error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+export async function deleteNotification(req, res) {
+  try {
+    const userId = req.user.id || req.user.userId;
+    const { id } = req.params;
+    const deleted = await notificationService.deleteNotification(id, userId);
+    if (!deleted) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+    res.json({ success: true, message: "Notification deleted" });
+  } catch (err) {
+    console.error("deleteNotification error:", err);
     res.status(500).json({ message: "Server error" });
   }
 }
