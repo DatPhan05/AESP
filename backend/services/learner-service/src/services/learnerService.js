@@ -57,6 +57,36 @@ export async function getLearnerById(id) {
   return result.rows[0] || null;
 }
 
+export async function getLearnerByUserId(userId) {
+  let result = await pool.query(`
+    SELECT l.id AS id, l.id AS learner_id, l.user_id, l.target_level, l.daily_goal_minutes, l.streak_count, NULL AS mentor_id,
+           u.name, u.email, u.phone
+    FROM learners l
+    JOIN users u ON l.user_id = u.id
+    WHERE l.user_id = $1
+  `, [userId]);
+
+  if (!result.rows[0]) {
+    await pool.query(`
+      INSERT INTO learners (user_id, target_level, daily_goal_minutes, streak_count)
+      VALUES ($1, 'B1', 30, 0)
+      ON CONFLICT (user_id) DO NOTHING
+    `, [userId]);
+
+    result = await pool.query(`
+      SELECT l.id AS id, l.id AS learner_id, l.user_id, l.target_level, l.daily_goal_minutes, l.streak_count, NULL AS mentor_id,
+             u.name, u.email, u.phone
+      FROM learners l
+      JOIN users u ON l.user_id = u.id
+      WHERE l.user_id = $1
+    `, [userId]);
+  }
+
+  return result.rows[0] || null;
+}
+
+export const getLearnerByUserIdService = getLearnerByUserId;
+
 export async function getLearnerPurchases(id) {
   return await getPurchasesByLearner(id);
 }
@@ -537,14 +567,6 @@ export async function createLearnerFeedbackForMentor(learnerId, mentorId, { cont
   } finally {
     client.release();
   }
-}
-
-export async function getLearnerByUserIdService(userId) {
-  const result = await pool.query(
-    "SELECT id, user_id, mentor_id FROM learners WHERE user_id = $1",
-    [userId]
-  );
-  return result.rows[0] || null;
 }
 
 export async function downloadLearnerResourceService(learnerId, resourceId) {
