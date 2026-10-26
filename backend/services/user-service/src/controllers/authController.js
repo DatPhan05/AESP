@@ -57,7 +57,7 @@ const RESET_TOKEN_EXPIRES = process.env.RESET_TOKEN_EXPIRES || "1h";
 
 export async function register(req, res) {
   try {
-    const { name, email, phone, dob, role, password } = req.body;
+    const { name, email, phone, dob, role, password, security_question, security_answer } = req.body;
 
     if (!email && !phone) {
       return res.status(400).json({ message: "Vui lòng cung cấp email hoặc số điện thoại" });
@@ -82,27 +82,35 @@ export async function register(req, res) {
       return res.status(400).json({ message: "Số điện thoại không hợp lệ" });
     }
 
-    if (email) {
-      const existingEmail = await findUserByEmail(email);
+    const normalizedEmail = email ? email.trim().toLowerCase() : null;
+    const normalizedPhone = phone ? phone.trim() : null;
+
+    if (normalizedEmail) {
+      const existingEmail = await findUserByEmail(normalizedEmail);
       if (existingEmail) return res.status(400).json({ message: "Email đã tồn tại" });
     }
 
-    if (phone) {
-      const existingPhone = await findUserByPhone(phone);
+    if (normalizedPhone) {
+      const existingPhone = await findUserByPhone(normalizedPhone);
       if (existingPhone) return res.status(400).json({ message: "Số điện thoại đã tồn tại" });
     }
 
     const hashed = await bcrypt.hash(password, 10);
     const created = await createUserInDb({
-      name,
-      email: email || null,
-      phone: phone || null,
+      name: name ? name.trim() : (normalizedEmail ? normalizedEmail.split('@')[0] : "Learner"),
+      email: normalizedEmail,
+      phone: normalizedPhone,
       dob: dob || null,
-      role: role || "USER",
+      role: role ? role.toLowerCase() : "learner",
       password: hashed,
+      security_question: security_question ? security_question.trim() : null,
+      security_answer: security_answer ? security_answer.trim().toLowerCase() : null,
     });
 
-    return res.status(201).json({ message: "Đăng ký thành công", user: safeUserForClient(created) });
+    return res.status(201).json({ 
+      message: "Đăng ký thành công", 
+      user: safeUserForClient(created) 
+    });
   } catch (err) {
     console.error("Register error:", err);
     return res.status(500).json({ message: "Lỗi server" });

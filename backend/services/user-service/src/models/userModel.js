@@ -40,21 +40,37 @@ export async function findUserByIdentifier(identifier) {
 }
 
 export async function createUserInDb(user) {
+  const userRole = (user.role || 'learner').toLowerCase();
   const result = await pool.query(
-    `INSERT INTO users (name, email, phone, dob, role, password, status)
-     VALUES ($1,$2,$3,$4,$5,$6,$7)
+    `INSERT INTO users (name, email, phone, dob, role, password, status, security_question, security_answer)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
      RETURNING *`,
     [
       user.name,
       user.email,
       user.phone,
       user.dob,
-      user.role,
+      userRole,
       user.password,
-      user.status || 'active'
+      user.status || 'active',
+      user.security_question || null,
+      user.security_answer || null
     ]
   );
-  return result.rows[0];
+  const created = result.rows[0];
+
+  if (['learner', 'user'].includes(userRole)) {
+    try {
+      await pool.query(
+        `INSERT INTO learners (user_id) VALUES ($1) ON CONFLICT (user_id) DO NOTHING`,
+        [created.id]
+      );
+    } catch (e) {
+      // Non-fatal if learners table doesn't have unique constraint
+    }
+  }
+
+  return created;
 }
 
 export async function updateUserInDb(id, updates) {
