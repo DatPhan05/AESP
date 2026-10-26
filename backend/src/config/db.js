@@ -1,4 +1,4 @@
-﻿import pkg from "pg";
+import pkg from "pg";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -7,10 +7,13 @@ import { dirname } from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Ưu tiên load .env.local khi chạy ngoài Docker, .env.docker khi chạy trong Docker
-const envFile = process.env.DOCKER === "true" ? "../.env.docker" : "../.env.local";
+// Load .env.docker in Docker, or .env.local when running locally
+const envFile = process.env.DOCKER === "true" ? "../../.env.docker" : "../../.env.local";
 const envPath = path.resolve(__dirname, envFile);
 dotenv.config({ path: envPath });
+// Also try current working directory or backend/.env.local as fallback
+dotenv.config({ path: path.resolve(process.cwd(), "backend/.env.local") });
+dotenv.config();
 
 const { Pool } = pkg;
 
