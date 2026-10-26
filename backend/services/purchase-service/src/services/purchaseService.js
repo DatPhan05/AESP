@@ -83,23 +83,34 @@ export async function listLearnerPurchases(learnerId) {
   return result.rows;
 }
 
-export async function createNewPurchase({ learnerId, packageId, status = "active" }) {
+export async function createNewPurchase({ learnerId, userId, packageId, amount, status, payment_status }) {
+  let targetUserId = userId;
+  if (!targetUserId && learnerId) {
+    const lRes = await pool.query("SELECT user_id FROM learners WHERE id = $1", [learnerId]);
+    targetUserId = lRes.rows[0]?.user_id || learnerId;
+  }
+
+  const pkgRes = await pool.query("SELECT price, duration_days FROM packages WHERE id = $1", [packageId]);
+  const finalAmount = amount || pkgRes.rows[0]?.price || 199000;
+  const durationDays = pkgRes.rows[0]?.duration_days || 30;
+  const finalStatus = payment_status || (status === "active" ? "completed" : "completed");
+
   const sql = `
-    INSERT INTO purchases (learner_id, package_id, status, created_at)
-    VALUES ($1, $2, $3, NOW())
+    INSERT INTO purchases (learner_id, package_id, amount, payment_method, payment_status, start_date, end_date, created_at)
+    VALUES ($1, $2, $3, 'vnpay', $4, NOW(), NOW() + ($5 || ' days')::INTERVAL, NOW())
     RETURNING *
   `;
-  const result = await pool.query(sql, [learnerId, packageId, status]);
+  const result = await pool.query(sql, [targetUserId, packageId, finalAmount, finalStatus, durationDays]);
   return result.rows[0];
 }
 
-export async function renewPurchase(purchaseId, extraDays) {
+export async function renewPurchase(purchaseId, extraDays = 30) {
   const result = await pool.query("SELECT * FROM purchases WHERE id = $1", [purchaseId]);
   const purchase = result.rows[0];
   if (!purchase) throw new Error("Purchase not found");
 
   await pool.query(
-    "UPDATE purchases SET status='renewed', renewed_at=NOW(), extra_days = COALESCE(extra_days, 0) + $1 WHERE id=$2",
+    "UPDATE purchases SET payment_status='completed', end_date = COALESCE(end_date, NOW()) + ($1 || ' days')::INTERVAL WHERE id=$2",
     [extraDays, purchaseId]
   );
 
@@ -111,9 +122,13 @@ export async function changePackage(purchaseId, newPackageId) {
   const purchase = result.rows[0];
   if (!purchase) throw new Error("Purchase not found");
 
+  const pkgRes = await pool.query("SELECT price, duration_days FROM packages WHERE id = $1", [newPackageId]);
+  const newAmount = pkgRes.rows[0]?.price || purchase.amount;
+  const durationDays = pkgRes.rows[0]?.duration_days || 30;
+
   await pool.query(
-    "UPDATE purchases SET status='changed', changed_at=NOW(), package_id=$1 WHERE id=$2",
-    [newPackageId, purchaseId]
+    "UPDATE purchases SET package_id=$1, amount=$2, end_date = NOW() + ($3 || ' days')::INTERVAL WHERE id=$4",
+    [newPackageId, newAmount, durationDays, purchaseId]
   );
 
   return { success: true };

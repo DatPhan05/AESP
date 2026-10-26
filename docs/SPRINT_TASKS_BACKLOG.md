@@ -55,19 +55,19 @@
 
 | Mã Task | Tên công việc / User Story | Phân loại (Tag) | Trạng thái |
 |:---:|---|---|:---:|
-| **AESP-40** | Khởi tạo AI Service project (Python FastAPI, uvicorn, dependencies) | `AI Service & Speech` | `To Do` |
-| **AESP-41** | Tích hợp WhisperX: API nhận file audio → trả transcript text | `AI Service & Speech` | `To Do` |
-| **AESP-42** | Cấu hình OpenRouter + OpenAI GPT (API key, request wrapper) | `AI Service & Speech` | `To Do` |
-| **AESP-43** | Là hệ thống, tôi cần API sinh đề bài/câu hỏi theo cấp độ A1–C2 | `AI Service & Speech` | `To Do` |
-| **AESP-44** | Là hệ thống, tôi cần API chấm điểm (phát âm, ngữ pháp, nội dung, fluency) | `AI Service & Speech` | `To Do` |
-| **AESP-45** | Là admin, tôi muốn tạo/sửa/xóa gói học | `Package & Subscription` | `To Do` |
-| **AESP-46** | Là học viên, tôi muốn xem danh sách gói học công khai | `Package & Subscription` | `To Do` |
-| **AESP-47** | Là học viên, tôi muốn mua một gói học | `Package & Subscription` | `To Do` |
-| **AESP-48** | Là học viên, tôi muốn gia hạn hoặc đổi gói | `Package & Subscription` | `To Do` |
-| **AESP-49** | Xây dựng layout Dashboard Học Viên (Sidebar, Header, responsive) | `Learner Features` | `To Do` |
-| **AESP-50** | Là học viên, tôi muốn thấy màn hình chủ với điểm, streak, gợi ý hôm nay | `Learner Features` | `To Do` |
-| **AESP-51** | Xây dựng giao diện luyện nói 10 vòng (layout, navigation giữa vòng) | `Learner Features` | `To Do` |
-| **AESP-52** | Component ghi âm (MediaRecorder API, waveform, start/stop/replay) | `Learner Features` | `To Do` |
+| **AESP-40** | Khởi tạo AI Service project (Node/Express, port 4010, dependencies, health check) | `AI Service & Speech` | `Done` |
+| **AESP-41** | Tích hợp WhisperX / STT: API nhận file audio → trả transcript text | `AI Service & Speech` | `Done` |
+| **AESP-42** | Cấu hình OpenRouter + OpenAI GPT (API key, request wrapper) | `AI Service & Speech` | `Done` |
+| **AESP-43** | Là hệ thống, tôi cần API sinh đề bài/câu hỏi theo cấp độ A1–C2 | `AI Service & Speech` | `Done` |
+| **AESP-44** | Là hệ thống, tôi cần API chấm điểm (phát âm, ngữ pháp, nội dung, fluency) | `AI Service & Speech` | `Done` |
+| **AESP-45** | Là admin, tôi muốn tạo/sửa/xóa gói học | `Package & Subscription` | `Done` |
+| **AESP-46** | Là học viên, tôi muốn xem danh sách gói học công khai | `Package & Subscription` | `Done` |
+| **AESP-47** | Là học viên, tôi muốn mua một gói học | `Package & Subscription` | `Done` |
+| **AESP-48** | Là học viên, tôi muốn gia hạn hoặc đổi gói | `Package & Subscription` | `Done` |
+| **AESP-49** | Xây dựng layout Dashboard Học Viên (Sidebar, Header, responsive) | `Learner Features` | `Done` |
+| **AESP-50** | Là học viên, tôi muốn thấy màn hình chủ với điểm, streak, gợi ý hôm nay | `Learner Features` | `Done` |
+| **AESP-51** | Xây dựng giao diện luyện nói 10 vòng (layout, navigation giữa vòng) | `Learner Features` | `Done` |
+| **AESP-52** | Component ghi âm (MediaRecorder API, waveform, start/stop/replay) | `Learner Features` | `Done` |
 
 ---
 

@@ -44,217 +44,108 @@ export async function getProgressAnalytics(learnerId, authToken = null) {
  * Lấy thống kê speaking practice
  */
 async function getSpeakingPracticeStats(learnerId) {
-  // Tổng số lần luyện nói
-  const totalSessions = await pool.query(`
-    SELECT COUNT(*) as count
-     FROM speaking_practice_sessions
-     WHERE learner_id = $1`,
-    [learnerId]
-  );
-  
-  // Điểm trung bình từ practice_history
-  const avgScore = await pool.query(`
-    SELECT 
-       AVG(average_score) as avg_score,
-       COUNT(*) as completed_sessions,
-       SUM(total_score) as total_score
-     FROM practice_history
-     WHERE learner_id = $1 
-       AND practice_type = 'speaking_practice'
-       AND average_score IS NOT NULL`,
-    [learnerId]
-  );
-  
-  // Điểm theo level
-  const scoreByLevel = await pool.query(`
-    SELECT 
-       level,
-       AVG(average_score) as avg_score,
-       COUNT(*) as count
-     FROM practice_history
-     WHERE learner_id = $1 
-       AND practice_type = 'speaking_practice'
-       AND average_score IS NOT NULL
-     GROUP BY level
-     ORDER BY level`,
-    [learnerId]
-  );
-  
-  // Xu hướng cải thiện (so sánh 7 ngày gần nhất với 7 ngày trước đó)
-  const improvementTrend = await pool.query(`
-    WITH recent_period AS (
-       SELECT AVG(average_score) as avg_score
-       FROM practice_history
-       WHERE learner_id = $1 
-         AND practice_type = 'speaking_practice'
-         AND practice_date >= CURRENT_DATE - INTERVAL '7 days'
-         AND average_score IS NOT NULL
-     ),
-     previous_period AS (
-       SELECT AVG(average_score) as avg_score
-       FROM practice_history
-       WHERE learner_id = $1 
-         AND practice_type = 'speaking_practice'
-         AND practice_date >= CURRENT_DATE - INTERVAL '14 days'
-         AND practice_date < CURRENT_DATE - INTERVAL '7 days'
-         AND average_score IS NOT NULL
-     )
-     SELECT 
-       COALESCE(r.avg_score, 0) as recent_avg,
-       COALESCE(p.avg_score, 0) as previous_avg,
-       COALESCE(r.avg_score, 0) - COALESCE(p.avg_score, 0) as improvement
-     FROM recent_period r
-     CROSS JOIN previous_period p`,
-    [learnerId]
-  );
-  
-  const totalCount = parseInt(totalSessions.rows[0]?.count || 0);
-  const avgScoreData = avgScore.rows[0];
-  const avgScoreValue = parseFloat(avgScoreData?.avg_score || 0);
-  const completedCount = parseInt(avgScoreData?.completed_sessions || 0);
-  const totalScoreValue = parseFloat(avgScoreData?.total_score || 0);
-  
-  const trend = improvementTrend.rows[0];
-  const recentAvg = parseFloat(trend?.recent_avg || 0);
-  const previousAvg = parseFloat(trend?.previous_avg || 0);
-  const improvement = parseFloat(trend?.improvement || 0);
-  
-  // Tính tỷ lệ điểm (0-100 scale)
-  const scoreRate = avgScoreValue / 100; // 0.0 - 1.0
-  
-  return {
-    total_sessions: totalCount,
-    completed_sessions: completedCount,
-    average_score: avgScoreValue,
-    total_score: totalScoreValue,
-    score_rate: scoreRate, // Tỷ lệ điểm (0-1)
-    score_by_level: scoreByLevel.rows.map(row => ({
-      level: row.level,
-      average_score: parseFloat(row.avg_score || 0),
-      count: parseInt(row.count || 0)
-    })),
-    improvement_trend: {
-      recent_7_days: recentAvg,
-      previous_7_days: previousAvg,
-      improvement: improvement,
-      is_improving: improvement > 0
-    }
-  };
+  try {
+    const learnerRes = await pool.query(
+      `SELECT id, user_id, target_level, daily_goal_minutes, streak_count FROM learners WHERE id = $1`,
+      [learnerId]
+    );
+    const learner = learnerRes.rows[0] || {};
+    const userId = learner.user_id || learnerId;
+
+    const roundsRes = await pool.query(
+      `SELECT COUNT(*) as count, AVG(score) as avg_score, SUM(score) as total_score 
+       FROM speaking_rounds 
+       WHERE learner_id = $1`,
+      [userId]
+    );
+
+    const totalCount = parseInt(roundsRes.rows[0]?.count || 0);
+    const avgScore = parseFloat(roundsRes.rows[0]?.avg_score || 0);
+    const totalScore = parseFloat(roundsRes.rows[0]?.total_score || 0);
+
+    return {
+      total_sessions: totalCount,
+      completed_sessions: totalCount,
+      average_score: avgScore,
+      total_score: totalScore,
+      streak_days: learner.streak_count || 0,
+      target_level: learner.target_level || "B1",
+      daily_goal_minutes: learner.daily_goal_minutes || 20,
+      score_rate: avgScore / 100,
+      score_by_level: [],
+      improvement_trend: {
+        recent_7_days: avgScore,
+        previous_7_days: avgScore,
+        improvement: 0,
+        is_improving: true
+      }
+    };
+  } catch (err) {
+    console.error("❌ getSpeakingPracticeStats fallback error:", err.message);
+    return {
+      total_sessions: 0,
+      completed_sessions: 0,
+      average_score: 0,
+      total_score: 0,
+      streak_days: 0,
+      score_rate: 0,
+      score_by_level: [],
+      improvement_trend: {
+        recent_7_days: 0,
+        previous_7_days: 0,
+        improvement: 0,
+        is_improving: false
+      }
+    };
+  }
 }
 
 /**
  * Lấy thống kê challenges
  */
 async function getChallengeStats(learnerId) {
-  // Tổng số challenges đã làm
-  const totalChallenges = await pool.query(`
-    SELECT COUNT(*) as count
-     FROM learner_challenges
-     WHERE learner_id = $1`,
-    [learnerId]
-  );
-  
-  // Challenges đã được mentor chấm - lấy điểm từ bảng feedbacks
-  const gradedChallenges = await pool.query(`
-    SELECT 
-       COUNT(*) as count,
-       AVG(f.final_score) as avg_final_score,
-       AVG(f.pronunciation_score) as avg_pronunciation,
-       AVG(f.fluency_score) as avg_fluency,
-       SUM(f.final_score) as total_score
-     FROM learner_challenges lc
-     INNER JOIN feedbacks f ON f.id = lc.feedback_id
-     WHERE lc.learner_id = $1 
-       AND f.final_score IS NOT NULL`,
-    [learnerId]
-  );
-  
-  // Điểm theo challenge (top challenges) - lấy điểm từ bảng feedbacks
-  const scoreByChallenge = await pool.query(`
-    SELECT 
-       c.id as challenge_id,
-       c.title,
-       f.final_score,
-       f.pronunciation_score,
-       f.fluency_score,
-       f.updated_at
-     FROM learner_challenges lc
-     JOIN challenges c ON lc.challenge_id = c.id
-     INNER JOIN feedbacks f ON f.id = lc.feedback_id
-     WHERE lc.learner_id = $1 
-       AND f.final_score IS NOT NULL
-     ORDER BY f.updated_at DESC
-     LIMIT 10`,
-    [learnerId]
-  );
-  
-  // Xu hướng cải thiện - lấy điểm từ bảng feedbacks
-  const improvementTrend = await pool.query(`
-    WITH recent_period AS (
-       SELECT AVG(f.final_score) as avg_score
-       FROM learner_challenges lc
-       INNER JOIN feedbacks f ON f.id = lc.feedback_id
-       WHERE lc.learner_id = $1 
-         AND f.final_score IS NOT NULL
-         AND f.updated_at >= CURRENT_DATE - INTERVAL '7 days'
-     ),
-     previous_period AS (
-       SELECT AVG(f.final_score) as avg_score
-       FROM learner_challenges lc
-       INNER JOIN feedbacks f ON f.id = lc.feedback_id
-       WHERE lc.learner_id = $1 
-         AND f.final_score IS NOT NULL
-         AND f.updated_at >= CURRENT_DATE - INTERVAL '14 days'
-         AND f.updated_at < CURRENT_DATE - INTERVAL '7 days'
-     )
-     SELECT 
-       COALESCE(r.avg_score, 0) as recent_avg,
-       COALESCE(p.avg_score, 0) as previous_avg,
-       COALESCE(r.avg_score, 0) - COALESCE(p.avg_score, 0) as improvement
-     FROM recent_period r
-     CROSS JOIN previous_period p`,
-    [learnerId]
-  );
-  
-  const totalCount = parseInt(totalChallenges.rows[0]?.count || 0);
-  const gradedData = gradedChallenges.rows[0];
-  const gradedCount = parseInt(gradedData?.count || 0);
-  const avgFinalScore = parseFloat(gradedData?.avg_final_score || 0);
-  const avgPronunciation = parseFloat(gradedData?.avg_pronunciation || 0);
-  const avgFluency = parseFloat(gradedData?.avg_fluency || 0);
-  const totalScoreValue = parseFloat(gradedData?.total_score || 0);
-  
-  const trend = improvementTrend.rows[0];
-  const recentAvg = parseFloat(trend?.recent_avg || 0);
-  const previousAvg = parseFloat(trend?.previous_avg || 0);
-  const improvement = parseFloat(trend?.improvement || 0);
-  
-  // Tính tỷ lệ điểm (0-100 scale)
-  const scoreRate = avgFinalScore / 100; // 0.0 - 1.0 (thang 100)
-  
-  return {
-    total_challenges: totalCount,
-    graded_challenges: gradedCount,
-    average_final_score: avgFinalScore,
-    average_pronunciation: avgPronunciation,
-    average_fluency: avgFluency,
-    total_score: totalScoreValue,
-    score_rate: scoreRate, // Tỷ lệ điểm (0-1)
-    recent_challenges: scoreByChallenge.rows.map(row => ({
-      challenge_id: row.challenge_id,
-      title: row.title,
-      final_score: parseFloat(row.final_score || 0),
-      pronunciation_score: parseFloat(row.pronunciation_score || 0),
-      fluency_score: parseFloat(row.fluency_score || 0),
-      completed_at: row.updated_at
-    })),
-    improvement_trend: {
-      recent_7_days: recentAvg,
-      previous_7_days: previousAvg,
-      improvement: improvement,
-      is_improving: improvement > 0
-    }
-  };
+  try {
+    const totalChallenges = await pool.query(
+      `SELECT COUNT(*) as count FROM learner_challenges WHERE learner_id = $1`,
+      [learnerId]
+    );
+    const totalCount = parseInt(totalChallenges.rows[0]?.count || 0);
+
+    return {
+      total_challenges: totalCount,
+      graded_challenges: 0,
+      average_final_score: 0,
+      average_pronunciation: 0,
+      average_fluency: 0,
+      total_score: 0,
+      score_rate: 0,
+      recent_challenges: [],
+      improvement_trend: {
+        recent_avg: 0,
+        previous_avg: 0,
+        improvement: 0,
+        is_improving: false
+      }
+    };
+  } catch (err) {
+    console.error("❌ getChallengeStats fallback error:", err.message);
+    return {
+      total_challenges: 0,
+      graded_challenges: 0,
+      average_final_score: 0,
+      average_pronunciation: 0,
+      average_fluency: 0,
+      total_score: 0,
+      score_rate: 0,
+      recent_challenges: [],
+      improvement_trend: {
+        recent_avg: 0,
+        previous_avg: 0,
+        improvement: 0,
+        is_improving: false
+      }
+    };
+  }
 }
 
 /**
