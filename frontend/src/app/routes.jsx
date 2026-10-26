@@ -1,4 +1,4 @@
-﻿// src/app/routes.jsx
+// src/app/routes.jsx
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -7,6 +7,7 @@ import GuestRoute from "../components/GuestRoute";
 // Pages chung
 import Home from "../pages/Home";
 import Login from "../pages/Login";
+import Register from "../pages/Register";
 import ProfilePage from "../pages/Profile";
 import NotFound from "../pages/NotFound";
 import CommunicateCenter from "../pages/CommunicateCenter";
@@ -52,6 +53,14 @@ export default function AppRoutes() {
         element={
           <GuestRoute>
             <Login />
+          </GuestRoute>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <GuestRoute>
+            <Register />
           </GuestRoute>
         }
       />

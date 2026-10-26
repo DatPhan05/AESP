@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login as apiLogin } from "../services/authService";
 import { saveAuth } from "../utils/auth";
@@ -276,8 +276,26 @@ export default function Login({ onLogin }) {
               </button>
             </form>
 
+            <div style={{ textAlign: "center", marginTop: 16, fontSize: 14, color: "#64748b" }}>
+              Chưa có tài khoản?{" "}
+              <button
+                type="button"
+                onClick={() => navigate("/register")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "var(--color-primary-600, #4f46e5)",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  padding: 0
+                }}
+              >
+                Đăng ký ngay
+              </button>
+            </div>
+
             <div className="support-note">
-              Tài khoản được tạo bởi quản trị viên. Cần hỗ trợ?{" "}
+              Tài khoản được tạo bởi quản trị viên hoặc tự đăng ký. Cần hỗ trợ?{" "}
               <a href="tel:0123456789">
                 <strong>0123456789</strong>
               </a>
