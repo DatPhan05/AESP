@@ -30,6 +30,7 @@
     "check:db": "node backend/scripts/check-db-health.js",
     "test:api": "node backend/scripts/test-api-endpoints.js",
     "test:login": "node backend/scripts/test-login.js",
+    "test:sprint2": "node backend/scripts/test-sprint2.js",
     "generate:learners": "node backend/scripts/generateLearners.js",
     "check:assistant": "node backend/scripts/checkAssistantAI.js",
     "check:current-ai": "node backend/scripts/checkCurrentAI.js",
