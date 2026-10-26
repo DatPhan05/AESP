@@ -52,6 +52,7 @@ services:
 
   db:
     image: postgres:latest
+    container_name: aesp_postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
@@ -59,13 +60,28 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db_data:/var/lib/postgresql
+      - db_data:/var/lib/postgresql/data
+      - ./backend/db/init.sql:/docker-entrypoint-initdb.d/01-init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d aesp"]
       interval: 5s
       timeout: 5s
       retries: 5
       start_period: 10s  # Give DB time to start
+    networks:
+      - aesp_network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: aesp_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@aesp.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - aesp_network
 
