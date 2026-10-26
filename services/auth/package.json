@@ -1,11 +1,11 @@
-﻿{
-  ""name"": ""aesp-service"",
-  ""version"": ""1.0.0"",
-  ""type"": ""module"",
-  ""scripts"": {
-    ""start"": ""node src/server.js""
+{
+  "name": "aesp-auth-service",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js"
   },
-  ""dependencies"": {
-    ""express"": ""^4.18.2""
+  "dependencies": {
+    "express": "^4.18.2"
   }
 }
