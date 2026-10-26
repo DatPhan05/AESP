@@ -14,7 +14,7 @@ env/
 .env.*.local
 *.env
 
-# Audio Uploads & Outputs (Không đẩy audio người dùng lên Git)
+# Audio & Test Video Uploads & Outputs (Không đẩy video/audio nặng lên Git)
 backend/uploads/*
 !backend/uploads/.gitkeep
 backend/outputs/*
@@ -26,6 +26,8 @@ outputs/*
 *.webm
 *.wav
 *.mp3
+tests/artifacts/**/*.webp
+tests/artifacts/**/*.mp4
 
 # AI Model weights & Caches
 *.pt
