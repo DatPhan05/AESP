@@ -698,14 +698,19 @@ Remember: Only advance the conversation when the learner's response is effective
         Training 6: Tạo gợi ý cho learner khi họ không biết phải nói gì
         Gợi ý bao gồm: tiếng Anh (có thể nói theo) và tiếng Việt (giải thích)
         """
+        default_situation = "Learner needs to respond but doesn't know what to say"
+        recent_conv = "\n".join(
+            f"{msg.get('speaker', 'unknown')}: {msg.get('text_content', '')}"
+            for msg in conversation_history[-3:]
+        )
         system_prompt = f"""You are a helpful English learning assistant. The learner is stuck in a conversation scenario and needs a hint.
 
 Scenario: {scenario_context.get('title', 'Unknown')}
-Current situation: {current_situation or 'Learner needs to respond but doesn\'t know what to say'}
+Current situation: {current_situation or default_situation}
 Task goal: {scenario_context.get('task', '')}
 
 Recent conversation:
-{chr(10).join([f"{msg.get('speaker', 'unknown')}: {msg.get('text_content', '')}" for msg in conversation_history[-3:]])}
+{recent_conv}
 
 Create a helpful hint that:
 1. Provides a natural English response they could say (they can say this exactly or adapt it)
