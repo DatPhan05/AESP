@@ -10,6 +10,7 @@ import {
   changePassword,
   getSecurityQuestion,
   setSecurityQuestion,
+  getPredefinedSecurityQuestions,
 } from "../controllers/authController.js";
 import { authGuard } from "../middleware/authGuard.js";
 
@@ -24,6 +25,7 @@ router.post("/reset-password", resetPassword);
 
 router.get("/profile", authGuard, getProfile);
 router.post("/change-password", authGuard, changePassword);
+router.get("/security-questions/predefined", getPredefinedSecurityQuestions);
 router.get("/security-question", authGuard, getSecurityQuestion);
 router.post("/security-question", authGuard, setSecurityQuestion);
 

@@ -396,6 +396,20 @@ export async function getProfile(req, res) {
   }
 }
 
+export const PREDEFINED_SECURITY_QUESTIONS = [
+  "Tên trường tiểu học đầu tiên của bạn là gì?",
+  "Tên thú cưng đầu tiên của bạn là gì?",
+  "Món ăn yêu thích nhất của bạn là gì?",
+  "Thành phố nơi cha mẹ bạn gặp nhau là gì?",
+  "Bộ phim yêu thích thời thơ ấu của bạn là gì?",
+  "Tên cuốn sách đầu tiên truyền cảm hứng cho bạn là gì?",
+  "Biệt danh thời thơ ấu của bạn là gì?"
+];
+
+export async function getPredefinedSecurityQuestions(req, res) {
+  return res.json({ questions: PREDEFINED_SECURITY_QUESTIONS });
+}
+
 export async function getSecurityQuestion(req, res) {
   try {
     const requester = req.user;
