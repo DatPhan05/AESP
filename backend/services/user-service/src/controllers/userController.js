@@ -146,6 +146,47 @@ export async function getMyProfile(req, res) {
   }
 }
 
+// Update user's own profile
+export async function updateMyProfile(req, res) {
+  try {
+    const userId = req.user?.id || req.user?.user_id || req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { name, phone, dob, bio } = req.body;
+    const updates = {};
+    if (name !== undefined) updates.name = name.trim();
+    if (phone !== undefined) updates.phone = phone.trim();
+    if (dob !== undefined) updates.dob = dob;
+
+    const updated = await updateUserInDb(userId, updates);
+    if (!updated) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (bio !== undefined && ['mentor', 'MENTOR'].includes(updated.role)) {
+      try {
+        await pool.query(
+          `UPDATE mentors SET bio = $1 WHERE user_id = $2`,
+          [bio.trim(), userId]
+        );
+      } catch (mErr) {
+        console.warn("Update mentor bio warning:", mErr.message);
+      }
+    }
+
+    return res.json({ 
+      success: true, 
+      message: "Cập nhật thông tin thành công", 
+      user: safeUserForClient(updated) 
+    });
+  } catch (err) {
+    console.error("updateMyProfile error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+}
+
 export async function getMyPackage(req, res) {
   try {
     const userId = req.user?.id || req.user?.user_id || req.user?._id;

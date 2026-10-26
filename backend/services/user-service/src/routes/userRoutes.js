@@ -7,6 +7,7 @@ const router = express.Router();
 // Route cho user quản lý profile của chính họ (không cần admin)
 // Route này được mount tại /users trong server.js, nên path là /me/...
 router.get("/me", authGuard, userCtrl.getMyProfile);
+router.put("/me", authGuard, userCtrl.updateMyProfile);
 router.get("/me/package", authGuard, userCtrl.getMyPackage);
 router.post("/me/avatar", authGuard, userCtrl.uploadAvatarMiddleware.single("avatar"), userCtrl.uploadMyAvatar);
 
