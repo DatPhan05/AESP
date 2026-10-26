@@ -8,6 +8,7 @@ import App from "./app/App.jsx";
 import "./styles/design-tokens.css";
 import "./styles/theme.css";
 import "./styles/base.css";
+import "./styles/components.css";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { getAuth } from "./utils/auth";
 

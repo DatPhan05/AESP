@@ -1,36 +1,70 @@
-﻿import React from "react";
-import { createPortal } from "react-dom";
-import "../../styles/modal.css";
+import React, { useEffect } from "react";
 
-export default function Modal({ title, children, onClose, className = "", isOpen = true }) {
+export default function Modal({
+  isOpen = false,
+  onClose = () => {},
+  title = "",
+  children,
+  footer = null,
+  size = "md",
+  closeOnBackdrop = true,
+  className = ""
+}) {
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    }
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
-  return createPortal(
+  const sizeClass = `aesp-modal-${size}`;
+
+  return (
     <div
-      className="modal-overlay"
+      className="aesp-modal-backdrop"
       onClick={(e) => {
-        // chỉ đóng khi click đúng overlay
-        if (e.target.classList.contains("modal-overlay")) {
-          onClose?.();
+        if (closeOnBackdrop && e.target === e.currentTarget) {
+          onClose();
         }
       }}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="aesp-modal-title"
     >
-      <div className={`modal-card ${className}`} onClick={(e) => e.stopPropagation()}>
-        {title && (
-          <div className="modal-header">
-            <h3>{title}</h3>
+      <div className={["aesp-modal-box", sizeClass, className].filter(Boolean).join(" ")}>
+        {(title || onClose) && (
+          <div className="aesp-modal-header">
+            {title && (
+              <h2 id="aesp-modal-title" className="aesp-modal-title">
+                {title}
+              </h2>
+            )}
             <button
-              className="btn-close"
+              type="button"
+              className="aesp-modal-close-btn"
               onClick={onClose}
               aria-label="Đóng"
             >
-              ✕
+              &times;
             </button>
           </div>
         )}
-        <div className="modal-body">{children}</div>
+
+        <div className="aesp-modal-body">{children}</div>
+
+        {footer && <div className="aesp-modal-footer">{footer}</div>}
       </div>
-    </div>,
-    document.body
+    </div>
   );
 }
