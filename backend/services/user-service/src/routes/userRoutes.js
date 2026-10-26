@@ -10,6 +10,7 @@ router.get("/me", authGuard, userCtrl.getMyProfile);
 router.put("/me", authGuard, userCtrl.updateMyProfile);
 router.get("/me/package", authGuard, userCtrl.getMyPackage);
 router.post("/me/avatar", authGuard, userCtrl.uploadAvatarMiddleware.single("avatar"), userCtrl.uploadMyAvatar);
+router.post("/avatar", authGuard, userCtrl.uploadAvatarMiddleware.single("avatar"), userCtrl.uploadMyAvatar);
 
 // Routes yêu cầu admin (đặt sau route /me để không bị conflict)
 // Route này được mount tại /admin trong server.js, nên path là /users/...
