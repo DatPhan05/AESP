@@ -21,10 +21,22 @@ export function verifyGatewayJwt(req, res, next) {
     return next();
   }
 
-  const path = req.path || req.url;
+  const fullPath = (req.originalUrl || req.url || "").split("?")[0];
+  const relativePath = (req.path || req.url || "").split("?")[0];
 
-  // Check if public path
-  const isPublic = PUBLIC_PREFIXES.some(prefix => path.startsWith(prefix));
+  // Check if public path (checking against full path or path without /api)
+  const isPublic = PUBLIC_PREFIXES.some(prefix => {
+    const noApiPrefix = prefix.startsWith("/api") ? prefix.substring(4) : prefix;
+    return (
+      fullPath === prefix ||
+      fullPath.startsWith(prefix + "/") ||
+      fullPath.startsWith(prefix) ||
+      relativePath === noApiPrefix ||
+      relativePath.startsWith(noApiPrefix + "/") ||
+      relativePath.startsWith(noApiPrefix)
+    );
+  });
+
   if (isPublic) {
     return next();
   }

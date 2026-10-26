@@ -177,41 +177,21 @@ export async function login(req, res) {
       return res.status(401).json({ message: "Sai tài khoản hoặc mật khẩu" });
     }
 
-    // Check subscription for learners (users who have learner records)
-    console.log(`[Login] Checking if user is learner: ${user.email}`);
+    // Check subscription status for learner
+    let hasActivePackage = true;
     try {
-      const learnerCheck = await pool.query(`
-        SELECT l.id AS learner_id FROM learners l WHERE l.user_id = $1
+      const subscriptionResult = await pool.query(`
+        SELECT EXISTS (
+          SELECT 1 FROM purchases p
+          WHERE p.learner_id = $1 
+            AND p.payment_status = 'completed'
+            AND (p.end_date IS NULL OR p.end_date > NOW())
+        ) AS has_active_package
       `, [user.id]);
 
-      if (learnerCheck.rows.length > 0) {
-        console.log(`[Login] User is learner, checking subscription: ${user.email}`);
-        const subscriptionResult = await pool.query(`
-          SELECT EXISTS (
-            SELECT 1 FROM learners l 
-            LEFT JOIN purchases p ON l.id = p.learner_id AND p.status = 'active'
-            LEFT JOIN packages pkg ON p.package_id = pkg.id
-            WHERE l.user_id = $1 AND (
-              p.expiry_date > NOW() OR
-              (p.expiry_date IS NULL AND 
-               p.created_at + (COALESCE(pkg.duration_days, 0) * INTERVAL '1 day') + (COALESCE(p.extra_days, 0) * INTERVAL '1 day') > NOW())
-            )
-          ) AS has_active_package
-        `, [user.id]);
-
-        const hasActivePackage = subscriptionResult.rows[0]?.has_active_package || false;
-
-        if (!hasActivePackage) {
-          console.log(`[Login] No active package for learner: ${user.email}`);
-          return res.status(403).json({
-            message: "Khóa học của bạn đã hết hạn, vui lòng liên hệ hỗ trợ!",
-            expired: true
-          });
-        }
-      }
+      hasActivePackage = Boolean(subscriptionResult.rows[0]?.has_active_package);
     } catch (subErr) {
-      console.error(`[Login] Error checking subscription for user ${user.id}:`, subErr);
-      // Allow login if subscription check fails (fail-safe)
+      console.warn(`[Login] Subscription check skipped:`, subErr.message);
     }
 
     // Lấy thông tin device từ request

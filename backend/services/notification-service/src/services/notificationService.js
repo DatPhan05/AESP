@@ -2,16 +2,14 @@ import pool from "../config/db.js";
 
 export async function createNotification({
   userId,
-  type,
+  type = "system",
   title,
   message,
-  relatedPostId = null,
-  relatedCommentId = null,
-  relatedUserId = null
+  linkUrl = null
 }) {
   const sql = `
-    INSERT INTO notifications (user_id, type, title, message, related_post_id, related_comment_id, related_user_id, created_at)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+    INSERT INTO notifications (user_id, type, title, message, link_url, created_at)
+    VALUES ($1, $2, $3, $4, $5, NOW())
     RETURNING *
   `;
   const result = await pool.query(sql, [
@@ -19,36 +17,32 @@ export async function createNotification({
     type,
     title,
     message,
-    relatedPostId,
-    relatedCommentId,
-    relatedUserId
+    linkUrl
   ]);
   return result.rows[0];
 }
 
 export async function createNotificationsForUsers({
   userIds,
-  type,
+  type = "system",
   title,
   message,
-  relatedPostId = null,
-  relatedCommentId = null,
-  relatedUserId = null
+  linkUrl = null
 }) {
   if (!userIds || userIds.length === 0) return [];
 
   const values = userIds.map((_, index) => {
-    const baseIndex = index * 7;
-    return `($${baseIndex + 1}, $${baseIndex + 2}, $${baseIndex + 3}, $${baseIndex + 4}, $${baseIndex + 5}, $${baseIndex + 6}, $${baseIndex + 7}, NOW())`;
+    const baseIndex = index * 5;
+    return `($${baseIndex + 1}, $${baseIndex + 2}, $${baseIndex + 3}, $${baseIndex + 4}, $${baseIndex + 5}, NOW())`;
   }).join(', ');
 
   const params = [];
   userIds.forEach(userId => {
-    params.push(userId, type, title, message, relatedPostId, relatedCommentId, relatedUserId);
+    params.push(userId, type, title, message, linkUrl);
   });
 
   const sql = `
-    INSERT INTO notifications (user_id, type, title, message, related_post_id, related_comment_id, related_user_id, created_at)
+    INSERT INTO notifications (user_id, type, title, message, link_url, created_at)
     VALUES ${values}
     RETURNING *
   `;
@@ -60,14 +54,11 @@ export async function getAllUserIds(excludeUserId = null) {
   let sql = `
     SELECT DISTINCT u.id
     FROM users u
-    LEFT JOIN learners l ON u.id = l.user_id
-    LEFT JOIN mentors m ON u.id = m.user_id
-    WHERE (l.id IS NOT NULL OR m.id IS NOT NULL)
   `;
   const params = [];
   if (excludeUserId) {
     params.push(excludeUserId);
-    sql += ` AND u.id != $1`;
+    sql += ` WHERE u.id != $1`;
   }
   const result = await pool.query(sql, params);
   return result.rows.map(row => row.id);
@@ -78,14 +69,8 @@ export async function getNotifications(userId, { page = 1, limit = 20, unreadOnl
   const params = [userId];
   let sql = `
     SELECT 
-      n.*,
-      u.name AS related_user_name,
-      p.content AS related_post_content,
-      c.content AS related_comment_content
+      n.*
     FROM notifications n
-    LEFT JOIN users u ON n.related_user_id = u.id
-    LEFT JOIN community_posts p ON n.related_post_id = p.id
-    LEFT JOIN post_comments c ON n.related_comment_id = c.id
     WHERE n.user_id = $1
   `;
 
@@ -107,7 +92,7 @@ export async function getUnreadCount(userId) {
     WHERE user_id = $1 AND is_read = false
   `;
   const result = await pool.query(sql, [userId]);
-  return parseInt(result.rows[0].count);
+  return parseInt(result.rows[0]?.count || 0, 10);
 }
 
 export async function markAsRead(notificationId, userId) {
@@ -134,9 +119,8 @@ export async function markAllAsRead(userId) {
 
 export async function findNotificationById(id, userId) {
   const sql = `
-    SELECT n.*, u.name as related_user_name
+    SELECT n.*
     FROM notifications n
-    LEFT JOIN users u ON n.related_user_id = u.id
     WHERE n.id = $1 AND ($2::int IS NULL OR n.user_id = $2)
   `;
   const result = await pool.query(sql, [id, userId || null]);
@@ -152,4 +136,3 @@ export async function deleteNotification(id, userId) {
   const result = await pool.query(sql, [id, userId || null]);
   return result.rowCount > 0;
 }
-

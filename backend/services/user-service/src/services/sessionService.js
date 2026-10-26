@@ -2,12 +2,16 @@
  * Session Service
  * Quản lý user sessions để đảm bảo 1 tài khoản chỉ hoạt động trên 1 thiết bị
  */
-
+import crypto from "crypto";
 import pool from "../config/db.js";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
 const JWT_EXPIRES = process.env.JWT_EXPIRES || "1d";
+
+function hashToken(token) {
+  return crypto.createHash("sha256").update(token).digest("hex");
+}
 
 /**
  * Tạo session mới cho user và invalidate tất cả sessions cũ
@@ -45,14 +49,15 @@ export async function createSession(userId, deviceInfo = null, ipAddress = null,
     // Tính expires_at từ JWT_EXPIRES
     const expiresInMs = parseJWTExpires(JWT_EXPIRES);
     const expiresAt = new Date(Date.now() + expiresInMs);
+    const tokenHash = hashToken(token);
 
-    // Tạo session mới
+    // Tạo session mới lưu vào database
     const result = await pool.query(
       `INSERT INTO user_sessions 
-       (user_id, token, device_info, ip_address, user_agent, expires_at, is_active)
-       VALUES ($1, $2, $3, $4, $5, $6, TRUE)
+       (user_id, token_hash, ip_address, user_agent, expires_at, is_active)
+       VALUES ($1, $2, $3, $4, $5, TRUE)
        RETURNING *`,
-      [userId, token, deviceInfo, ipAddress, userAgent, expiresAt]
+      [userId, tokenHash, ipAddress, userAgent, expiresAt]
     );
 
     return {
@@ -79,29 +84,20 @@ export async function validateSession(token) {
     }
 
     // Kiểm tra session trong database
+    const tokenHash = hashToken(token);
     const result = await pool.query(
       `SELECT * FROM user_sessions 
-       WHERE token = $1 AND is_active = TRUE AND expires_at > NOW()`,
-      [token]
+       WHERE token_hash = $1 AND is_active = TRUE AND (expires_at IS NULL OR expires_at > NOW())`,
+      [tokenHash]
     );
 
     if (result.rows.length === 0) {
       return { valid: false, reason: "Session not found or expired" };
     }
 
-    const session = result.rows[0];
-    
-    // Cập nhật last_activity
-    await pool.query(
-      `UPDATE user_sessions 
-       SET last_activity = NOW() 
-       WHERE id = $1`,
-      [session.id]
-    );
-
     return { 
       valid: true, 
-      session: session,
+      session: result.rows[0],
       userId: decoded.id 
     };
   } catch (err) {
@@ -115,11 +111,12 @@ export async function validateSession(token) {
  */
 export async function deleteSession(token) {
   try {
+    const tokenHash = hashToken(token);
     await pool.query(
       `UPDATE user_sessions 
        SET is_active = FALSE 
-       WHERE token = $1`,
-      [token]
+       WHERE token_hash = $1`,
+      [tokenHash]
     );
     return true;
   } catch (err) {
@@ -150,7 +147,7 @@ export async function deleteAllUserSessions(userId) {
  * Parse JWT_EXPIRES string thành milliseconds
  */
 function parseJWTExpires(expires) {
-  const match = expires.match(/^(\d+)([smhd])$/);
+  const match = String(expires).match(/^(\d+)([smhd])$/);
   if (!match) return 24 * 60 * 60 * 1000; // Default 1 day
 
   const value = parseInt(match[1]);
@@ -166,7 +163,7 @@ function parseJWTExpires(expires) {
 }
 
 /**
- * Cleanup expired sessions (có thể gọi định kỳ)
+ * Cleanup expired sessions
  */
 export async function cleanupExpiredSessions() {
   try {
@@ -181,4 +178,3 @@ export async function cleanupExpiredSessions() {
     return 0;
   }
 }
-

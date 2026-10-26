@@ -83,65 +83,43 @@ export async function getMyProfile(req, res) {
   try {
     const userId = req.user?.id || req.user?.user_id || req.user?._id;
     if (!userId) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    
-    const result = await pool.query(`
-      SELECT 
-        u.id, u.name, u.email, u.phone, u.dob, u.role, u.status, u.created_at, u.avatar_url,
-        l.id AS learner_id,
-        lp.package_name,
-        lp.status AS package_status,
-        lp.expiry_date,
-        lp.days_left,
-        mu.id AS mentor_id,
-        mu.name AS mentor_name,
-        m.id AS mentor_mentor_id,
-        m.rating AS mentor_rating,
-        COALESCE(
-          (SELECT AVG(average_score) 
-           FROM practice_history 
-           WHERE learner_id = l.id 
-             AND practice_type = 'speaking_practice' 
-             AND average_score IS NOT NULL),
-          0
-        ) AS learner_average_score
-      FROM users u
-      LEFT JOIN learners l ON l.user_id = u.id
-      LEFT JOIN learner_package_view lp ON lp.learner_id = l.id
-      LEFT JOIN mentors m ON l.mentor_id = m.id
-      LEFT JOIN users mu ON m.user_id = mu.id
-      WHERE u.id = $1
-    `, [userId]);
-    
-    if (result.rows.length > 0 && result.rows[0].role?.toUpperCase() === "MENTOR") {
-      const mentorRes = await pool.query(`
-        SELECT m.rating
-        FROM mentors m
-        WHERE m.user_id = $1
-      `, [userId]);
-      if (mentorRes.rows.length > 0) {
-        result.rows[0].mentor_rating = mentorRes.rows[0].rating;
-      }
+      return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ success: false, message: "Not found" });
+    const user = await findUserById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // Format avatar_url to absolute URL (chỉ format relative paths, không format base64)
+    // Format avatar_url to absolute URL
     const protocol = req.get("x-forwarded-proto") || req.protocol || "http";
     const host = req.get("x-forwarded-host") || req.get("host") || "localhost:4000";
     const baseUrl = `${protocol}://${host}`;
-    
-    const user = result.rows[0];
+
     if (user.avatar_url && !user.avatar_url.startsWith("data:") && user.avatar_url.startsWith("/")) {
       user.avatar_url = `${baseUrl}${user.avatar_url}`;
     }
 
-    return res.json({ success: true, user });
+    // Attach role specifics if any
+    if (user.role === "learner") {
+      try {
+        const lRes = await pool.query("SELECT * FROM learners WHERE user_id = $1", [userId]);
+        if (lRes.rows.length > 0) {
+          user.learner = lRes.rows[0];
+        }
+      } catch (e) {}
+    } else if (user.role === "mentor") {
+      try {
+        const mRes = await pool.query("SELECT * FROM mentors WHERE user_id = $1", [userId]);
+        if (mRes.rows.length > 0) {
+          user.mentor = mRes.rows[0];
+        }
+      } catch (e) {}
+    }
+
+    return res.json({ success: true, user: safeUserForClient(user) });
   } catch (err) {
-    console.error("getMyProfile error: - userController.js:144", err);
+    console.error("getMyProfile error:", err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 }
