@@ -481,6 +481,9 @@ export async function changePassword(req, res) {
     const requester = req.user;
     if (!requester) return res.status(401).json({ message: "Chưa đăng nhập" });
     if (!oldPassword) return res.status(400).json({ message: "Vui lòng cung cấp mật khẩu cũ" });
+    if (oldPassword === newPassword) {
+      return res.status(400).json({ message: "Mật khẩu mới không được trùng với mật khẩu cũ" });
+    }
     
     const passwordError = getPasswordValidationMessage(newPassword);
     if (passwordError) {

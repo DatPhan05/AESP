@@ -1,5 +1,6 @@
 import express from "express";
 import * as userCtrl from "../controllers/userController.js";
+import { changePassword } from "../controllers/authController.js";
 import { authGuard, adminGuard } from "../middleware/authGuard.js";
 
 const router = express.Router();
@@ -8,6 +9,8 @@ const router = express.Router();
 // Route này được mount tại /users trong server.js, nên path là /me/...
 router.get("/me", authGuard, userCtrl.getMyProfile);
 router.put("/me", authGuard, userCtrl.updateMyProfile);
+router.put("/me/password", authGuard, changePassword);
+router.post("/change-password", authGuard, changePassword);
 router.get("/me/package", authGuard, userCtrl.getMyPackage);
 router.post("/me/avatar", authGuard, userCtrl.uploadAvatarMiddleware.single("avatar"), userCtrl.uploadMyAvatar);
 router.post("/avatar", authGuard, userCtrl.uploadAvatarMiddleware.single("avatar"), userCtrl.uploadMyAvatar);
