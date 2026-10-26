@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+*/node_modules/
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+env/
+
+# Environment Variables & Secrets (Bảo mật tuyệt đối)
+.env
+.env.local
+.env.*.local
+*.env
+
+# Audio Uploads & Outputs (Không đẩy audio người dùng lên Git)
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/outputs/*
+!backend/outputs/.gitkeep
+uploads/*
+!uploads/.gitkeep
+outputs/*
+!outputs/.gitkeep
+*.webm
+*.wav
+*.mp3
+
+# AI Model weights & Caches
+*.pt
+*.pth
+*.bin
+*.onnx
+.cache/
+whisper/
+
+# Build outputs
+frontend/dist/
+frontend/build/
+*.log
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
