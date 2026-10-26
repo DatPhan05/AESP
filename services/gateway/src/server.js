@@ -22,6 +22,34 @@ app.get("/health", (_, res) => {
   });
 });
 
+// JWT Verification Middleware for protected API endpoints
+const PUBLIC_API_PATHS = [
+  "/health",
+  "/api/auth/login",
+  "/api/auth/register",
+  "/api/auth/forgot-password",
+  "/api/auth/verify-security-answer",
+  "/api/auth/reset-password",
+  "/api/auth/security-questions",
+  "/api/packages/active"
+];
+
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") return next();
+  const isPublic = PUBLIC_API_PATHS.some(p => req.path.startsWith(p));
+  if (isPublic) return next();
+
+  const authHeader = req.headers["authorization"];
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+      error: "Unauthorized",
+      message: "Vui lòng cung cấp Bearer token hợp lệ để truy cập",
+      path: req.path
+    });
+  }
+  next();
+});
+
 // Placeholder route dispatchers
 app.use("/api/auth", (req, res) => {
   res.json({ message: "Auth route placeholder", method: req.method, path: req.path });

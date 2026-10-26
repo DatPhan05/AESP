@@ -7,6 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import fs from "fs";
+import { verifyGatewayJwt } from "./middleware/jwtMiddleware.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -157,6 +158,9 @@ app.use("/uploads", createProxyMiddleware({
     }
   }
 }));
+
+// Apply JWT Authentication Middleware to all /api routes
+app.use("/api", verifyGatewayJwt);
 
 // User & Auth Service
 // NOTE: Do NOT use express.json() before proxy - it consumes the body stream
