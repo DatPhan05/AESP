@@ -105,6 +105,7 @@ export async function createNewPurchase({ learnerId, userId, packageId, amount, 
   return result.rows[0];
 }
 
+// [AESP-48] Là học viên, tôi muốn gia hạn hoặc đổi gói (renewPurchase & changePackage)
 export async function renewPurchase(purchaseId, extraDays = 30) {
   const result = await pool.query("SELECT * FROM purchases WHERE id = $1", [purchaseId]);
   const purchase = result.rows[0];
