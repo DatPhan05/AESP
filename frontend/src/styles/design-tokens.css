@@ -1,41 +1,63 @@
 /**
  * ============================================================================
- * AESP Design System Tokens
- * Standardized Variables for Colors, Typography, Spacing, Shadows, and Radii
+ * AESP Design System Tokens — v2.0 (EdTech Premium — The Forum Inspired)
+ * Deep Navy / Indigo Dark + White + Electric Teal CTA
  * ============================================================================
  */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+
 :root {
-  /* --- Primary Brand Colors (Electric Indigo & Violet) --- */
-  --color-primary-50: #eef2ff;
-  --color-primary-100: #e0e7ff;
-  --color-primary-200: #c7d2fe;
-  --color-primary-300: #a5b4fc;
-  --color-primary-400: #818cf8;
+  /* ------------------------------------------------------------------ */
+  /* PRIMARY — Navy Indigo                                               */
+  /* ------------------------------------------------------------------ */
+  --color-primary-50:  #eef1ff;
+  --color-primary-100: #e0e5ff;
+  --color-primary-200: #c7d0ff;
+  --color-primary-300: #a5b2fc;
+  --color-primary-400: #818ef8;
   --color-primary-500: #6366f1;
   --color-primary-600: #4f46e5;
   --color-primary-700: #4338ca;
   --color-primary-800: #3730a3;
-  --color-primary-900: #312e81;
+  --color-primary-900: #1e1b6e;
   --color-primary: var(--color-primary-600);
   --color-primary-hover: var(--color-primary-700);
 
-  /* --- Secondary Colors (Teal / Cyan) --- */
-  --color-secondary-50: #f0fdfa;
+  /* Deep Navy (hero / dark sections) */
+  --navy-950: #0a0c28;
+  --navy-900: #0d1040;
+  --navy-800: #151952;
+  --navy-700: #1f2570;
+
+  /* ------------------------------------------------------------------ */
+  /* SECONDARY — Electric Teal (CTA / Action)                           */
+  /* ------------------------------------------------------------------ */
+  --color-secondary-50:  #f0fdfa;
   --color-secondary-100: #ccfbf1;
+  --color-secondary-200: #99f6e4;
+  --color-secondary-400: #2dd4bf;
   --color-secondary-500: #14b8a6;
   --color-secondary-600: #0d9488;
+  --color-secondary-700: #0f766e;
   --color-secondary: var(--color-secondary-500);
+  --color-secondary-hover: var(--color-secondary-600);
 
-  /* --- Accent Colors (Warm Amber / Gold) --- */
-  --color-accent-50: #fffbeb;
+  /* ------------------------------------------------------------------ */
+  /* ACCENT — Warm Gold (badges, streaks)                               */
+  /* ------------------------------------------------------------------ */
+  --color-accent-50:  #fffbeb;
   --color-accent-400: #fbbf24;
   --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
   --color-accent: var(--color-accent-500);
 
-  /* --- Neutral Grayscale --- */
-  --color-gray-50: #f8fafc;
+  /* ------------------------------------------------------------------ */
+  /* NEUTRAL GRAYSCALE                                                   */
+  /* ------------------------------------------------------------------ */
+  --color-gray-50:  #f8fafc;
   --color-gray-100: #f1f5f9;
+  --color-gray-150: #edf0f7;
   --color-gray-200: #e2e8f0;
   --color-gray-300: #cbd5e1;
   --color-gray-400: #94a3b8;
@@ -45,89 +67,143 @@
   --color-gray-800: #1e293b;
   --color-gray-900: #0f172a;
 
-  /* --- Semantic Feedback Colors --- */
-  --color-success: #10b981;
+  /* ------------------------------------------------------------------ */
+  /* SEMANTIC FEEDBACK                                                   */
+  /* ------------------------------------------------------------------ */
+  --color-success:    #10b981;
   --color-success-bg: #ecfdf5;
-  --color-warning: #f59e0b;
+  --color-warning:    #f59e0b;
   --color-warning-bg: #fffbeb;
-  --color-danger: #ef4444;
-  --color-danger-bg: #fef2f2;
-  --color-info: #3b82f6;
-  --color-info-bg: #eff6ff;
+  --color-danger:     #ef4444;
+  --color-danger-bg:  #fef2f2;
+  --color-info:       #3b82f6;
+  --color-info-bg:    #eff6ff;
 
-  /* --- Surface & Backgrounds --- */
-  --bg-app: #f8fafc;
-  --bg-surface: #ffffff;
+  /* ------------------------------------------------------------------ */
+  /* SURFACES & BACKGROUNDS                                              */
+  /* ------------------------------------------------------------------ */
+  --bg-app:              #f5f7ff;
+  --bg-surface:          #ffffff;
   --bg-surface-elevated: #ffffff;
-  --border-color: #e2e8f0;
-  --border-color-focus: var(--color-primary-500);
-  --text-main: #0f172a;
-  --text-muted: #64748b;
+  --bg-surface-muted:    #f8faff;
+  --bg-dark:             var(--navy-900);
+  --bg-dark-2:           var(--navy-800);
+  --border-color:        #e4e8f0;
+  --border-color-dark:   rgba(255,255,255,0.1);
+  --border-color-focus:  var(--color-secondary-500);
+  --text-main:    #0d1240;
+  --text-muted:   #64748b;
   --text-inverse: #ffffff;
 
-  /* --- Typography --- */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: 'JetBrains Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  /* ------------------------------------------------------------------ */
+  /* TYPOGRAPHY                                                          */
+  /* ------------------------------------------------------------------ */
+  --font-display: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono:    'JetBrains Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  --text-xs: 0.75rem;     /* 12px */
-  --text-sm: 0.875rem;    /* 14px */
-  --text-base: 1rem;       /* 16px */
-  --text-lg: 1.125rem;    /* 18px */
-  --text-xl: 1.25rem;     /* 20px */
-  --text-2xl: 1.5rem;     /* 24px */
-  --text-3xl: 1.875rem;   /* 30px */
-  --text-4xl: 2.25rem;    /* 36px */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  1.875rem;
+  --text-4xl:  2.25rem;
+  --text-5xl:  3rem;
+  --text-6xl:  3.75rem;
 
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
+  --font-weight-regular:   400;
+  --font-weight-medium:    500;
+  --font-weight-semibold:  600;
+  --font-weight-bold:      700;
+  --font-weight-extrabold: 800;
+  --font-weight-black:     900;
 
-  --line-height-tight: 1.25;
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.75;
+  --line-height-tight:   1.2;
+  --line-height-snug:    1.375;
+  --line-height-normal:  1.5;
+  --line-height-relaxed: 1.7;
 
-  /* --- Spacing Scale --- */
-  --space-0-5: 0.125rem;  /* 2px */
-  --space-1: 0.25rem;     /* 4px */
-  --space-2: 0.5rem;      /* 8px */
-  --space-3: 0.75rem;     /* 12px */
-  --space-4: 1rem;        /* 16px */
-  --space-5: 1.25rem;     /* 20px */
-  --space-6: 1.5rem;      /* 24px */
-  --space-8: 2rem;        /* 32px */
-  --space-10: 2.5rem;     /* 40px */
-  --space-12: 3rem;       /* 48px */
-  --space-16: 4rem;       /* 64px */
+  /* ------------------------------------------------------------------ */
+  /* SPACING                                                             */
+  /* ------------------------------------------------------------------ */
+  --space-0-5: 0.125rem;
+  --space-1:   0.25rem;
+  --space-2:   0.5rem;
+  --space-3:   0.75rem;
+  --space-4:   1rem;
+  --space-5:   1.25rem;
+  --space-6:   1.5rem;
+  --space-8:   2rem;
+  --space-10:  2.5rem;
+  --space-12:  3rem;
+  --space-16:  4rem;
+  --space-20:  5rem;
+  --space-24:  6rem;
 
-  /* --- Border Radius --- */
-  --radius-xs: 0.25rem;   /* 4px */
-  --radius-sm: 0.375rem;  /* 6px */
-  --radius-md: 0.5rem;    /* 8px */
-  --radius-lg: 0.75rem;   /* 12px */
-  --radius-xl: 1rem;      /* 16px */
-  --radius-2xl: 1.5rem;   /* 24px */
+  /* ------------------------------------------------------------------ */
+  /* BORDER RADIUS                                                       */
+  /* ------------------------------------------------------------------ */
+  --radius-xs:   0.25rem;
+  --radius-sm:   0.375rem;
+  --radius-md:   0.5rem;
+  --radius-lg:   0.75rem;
+  --radius-xl:   1rem;
+  --radius-2xl:  1.5rem;
+  --radius-3xl:  2rem;
   --radius-full: 9999px;
 
-  /* --- Elevation & Shadows --- */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.35);
+  /* ------------------------------------------------------------------ */
+  /* SHADOWS                                                             */
+  /* ------------------------------------------------------------------ */
+  --shadow-xs:   0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-sm:   0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --shadow-md:   0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  --shadow-lg:   0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  --shadow-xl:   0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+  --shadow-2xl:  0 25px 50px -12px rgb(0 0 0 / 0.15);
+  --shadow-teal-glow:   0 0 30px rgba(20, 184, 166, 0.35), 0 0 60px rgba(20, 184, 166, 0.15);
+  --shadow-indigo-glow: 0 0 24px rgba(99, 102, 241, 0.4);
+  --shadow-glow:        var(--shadow-indigo-glow);
+  --shadow-dark-card:   0 8px 32px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2);
 
-  /* --- Transitions --- */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* ------------------------------------------------------------------ */
+  /* TRANSITIONS                                                         */
+  /* ------------------------------------------------------------------ */
+  --transition-fast:   150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-smooth: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ------------------------------------------------------------------ */
+  /* LAYOUT                                                              */
+  /* ------------------------------------------------------------------ */
+  --sidebar-width:     256px;
+  --sidebar-collapsed: 72px;
+  --header-height:     68px;
+
+  /* ------------------------------------------------------------------ */
+  /* PORTAL THEMES (per-role)                                           */
+  /* ------------------------------------------------------------------ */
+  /* Learner: Teal-Emerald */
+  --learner-sidebar: linear-gradient(160deg, #0a2e24 0%, #0d5c42 45%, #0f766e 100%);
+
+  /* Mentor: Blue-Indigo */
+  --mentor-sidebar:  linear-gradient(160deg, #0d0e30 0%, #1e1b6e 45%, #4338ca 100%);
+
+  /* Admin: Slate-Navy */
+  --admin-sidebar:   linear-gradient(160deg, #080a1e 0%, #0d1040 45%, #1f2570 100%);
 }
 
-/* Dark Mode Tokens Support */
+/* ------------------------------------------------------------------ */
+/* DARK MODE                                                            */
+/* ------------------------------------------------------------------ */
 [data-theme='dark'] {
-  --bg-app: #090d16;
-  --bg-surface: #111827;
-  --bg-surface-elevated: #1f2937;
-  --border-color: #374151;
-  --text-main: #f9fafb;
-  --text-muted: #9ca3af;
+  --bg-app:              #07091e;
+  --bg-surface:          #0d1040;
+  --bg-surface-elevated: #151952;
+  --border-color:        rgba(255,255,255,0.08);
+  --text-main:           #e8ecff;
+  --text-muted:          #8892c0;
 }

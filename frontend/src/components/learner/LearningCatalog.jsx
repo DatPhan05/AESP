@@ -1,3 +1,4 @@
+// [AESP-46] Là học viên, tôi muốn xem danh sách gói học công khai & kho tài liệu
 import { useEffect, useState } from "react";
 import { getAuth } from "../../utils/auth";
 import api from "../../api";

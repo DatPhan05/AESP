@@ -85,7 +85,7 @@
 }
 
 /* Section */
-section {
+.report-page section {
   background: #fff;
   padding: 24px;
   border-radius: 12px;
@@ -94,7 +94,7 @@ section {
   border: 1px solid #e5e7eb;
 }
 
-section h2 {
+.report-page section h2 {
   margin: 0 0 20px 0;
   font-size: 22px;
   font-weight: 600;
@@ -104,24 +104,24 @@ section h2 {
 }
 
 /* Table */
-.table {
+.report-page .table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.table th,
-.table td {
+.report-page .table th,
+.report-page .table td {
   padding: 10px;
   border-bottom: 1px solid #eee;
   text-align: left;
 }
 
-.table th {
+.report-page .table th {
   background: #f0f2f5;
   font-weight: 600;
 }
 
-.table tr:hover {
+.report-page .table tr:hover {
   background: #fafafa;
 }
 
