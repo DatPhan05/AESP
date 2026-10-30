@@ -13,30 +13,31 @@ export async function getPackageById(id) {
 }
 
 export async function createPackage(data) {
-  const { name, description, price, original_price, duration_days } = data;
+  const { name, code, description, price, duration_days, durationDays, features = {} } = data;
+  const days = duration_days || durationDays || 30;
+  const pkgCode = code || `PKG_${Date.now()}`;
   const sql = `
-    INSERT INTO packages (name, description, price, original_price, duration_days, created_at, updated_at)
-    VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+    INSERT INTO packages (name, code, description, price, duration_days, features, is_active, created_at)
+    VALUES ($1, $2, $3, $4, $5, $6, true, NOW())
     RETURNING *
   `;
-  const result = await pool.query(sql, [name, description, price, original_price, duration_days]);
+  const result = await pool.query(sql, [name, pkgCode, description, price, days, JSON.stringify(features)]);
   return result.rows[0];
 }
 
 export async function updatePackage(id, data) {
-  const { name, description, price, original_price, duration_days } = data;
+  const { name, description, price, duration_days, durationDays } = data;
+  const days = duration_days || durationDays;
   const sql = `
     UPDATE packages
     SET name = COALESCE($1, name),
         description = COALESCE($2, description),
         price = COALESCE($3, price),
-        original_price = COALESCE($4, original_price),
-        duration_days = COALESCE($5, duration_days),
-        updated_at = NOW()
-    WHERE id = $6
+        duration_days = COALESCE($4, duration_days)
+    WHERE id = $5
     RETURNING *
   `;
-  const result = await pool.query(sql, [name, description, price, original_price, duration_days, id]);
+  const result = await pool.query(sql, [name, description, price, days, id]);
   return result.rows[0];
 }
 

@@ -1,4 +1,5 @@
-﻿import React, { useEffect, useState } from "react";
+// [AESP-45] Là admin, tôi muốn tạo/sửa/xóa gói học
+import React, { useEffect, useState } from "react";
 import api from "../../api";
 import Modal from "../common/Modal.jsx";
 import { FiPlus, FiTrash2, FiEdit } from "react-icons/fi";
