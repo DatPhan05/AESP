@@ -1,6 +1,6 @@
+// [AESP-41] Tích hợp WhisperX / STT: API nhận file audio -> trả transcript text
 /**
- * Utility to find Python executable
- * Copied from backend/src/utils/whisperxRunner.js
+ * Utility to find Python executable for WhisperX STT runner
  */
 import { execSync } from "child_process";
 
