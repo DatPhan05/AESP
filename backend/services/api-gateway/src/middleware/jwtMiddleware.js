@@ -12,7 +12,11 @@ const PUBLIC_PREFIXES = [
   "/api/auth/verify-security-answer",
   "/api/auth/reset-password",
   "/api/auth/security-questions",
-  "/api/packages/active"
+  "/api/packages/active",
+  "/api/packages/public",
+  "/api/ai/generate-question",
+  "/api/ai/evaluate-speech",
+  "/api/ai/transcribe"
 ];
 
 export function verifyGatewayJwt(req, res, next) {

@@ -388,7 +388,9 @@ app.use("/api/packages", createProxyMiddleware({
 app.use("/api/purchases", createProxyMiddleware({
   target: SERVICES.purchase,
   changeOrigin: true,
-  pathRewrite: { "^/api": "" },
+  pathRewrite: (path, req) => {
+    return `/purchases${path}`;
+  },
   onProxyReq: (proxyReq, req, res) => {
     // Forward all headers (except host and connection)
     Object.keys(req.headers).forEach(key => {

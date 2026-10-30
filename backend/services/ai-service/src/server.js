@@ -1,3 +1,4 @@
+// [AESP-40] Khởi tạo AI Service project (Node/Express, port 4010, dependencies, health check)
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
