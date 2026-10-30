@@ -224,6 +224,64 @@ router.post("/learner/analyze-transcript", async (req, res) => {
 });
 
 /**
+ * [AESP-43] POST /api/ai/generate-question
+ * Sinh đề bài/câu hỏi luyện nói theo chuẩn CEFR A1-C2
+ */
+router.post("/generate-question", async (req, res) => {
+  try {
+    const { level = "B1", topic = "General Communication" } = req.body;
+    const normalizedLevel = String(level).toUpperCase();
+
+    const cefrPrompts = {
+      A1: [
+        "Describe your morning routine: What time do you wake up and what do you have for breakfast?",
+        "Talk about your favorite family member: What does he or she look like?",
+        "What is your favorite food and why do you like it?"
+      ],
+      A2: [
+        "Describe your hometown: What are the best places to visit there?",
+        "Talk about a memorable trip you took with your friends or family.",
+        "What do you usually do on weekends to relax?"
+      ],
+      B1: [
+        "Do you prefer studying online or in a traditional classroom? Explain your reasons.",
+        "How has social media changed the way young people communicate with each other?",
+        "Describe a personal goal you want to achieve in the next two years."
+      ],
+      B2: [
+        "Discuss the advantages and disadvantages of working remotely from home.",
+        "How can cities encourage citizens to adopt environmentally friendly habits?",
+        "What role does artificial intelligence play in shaping modern education?"
+      ],
+      C1: [
+        "Critically evaluate the impact of globalization on local cultural heritage.",
+        "To what extent should governments regulate data privacy on international tech platforms?",
+        "Analyze the ethical considerations surrounding genetic engineering in modern medicine."
+      ],
+      C2: [
+        "Deliberate on the philosophical dilemma between individual freedom and societal security in digital governance.",
+        "Evaluate the systemic economic repercussions of rapid decarbonization across developing nations."
+      ]
+    };
+
+    const promptList = cefrPrompts[normalizedLevel] || cefrPrompts.B1;
+    const selectedQuestion = promptList[Math.floor(Math.random() * promptList.length)];
+
+    res.json({
+      success: true,
+      level: normalizedLevel,
+      topic,
+      question: selectedQuestion,
+      time_limit_seconds: normalizedLevel === "A1" || normalizedLevel === "A2" ? 30 : 60,
+      suggested_keywords: ["communication", "experience", "development", "perspective"]
+    });
+  } catch (err) {
+    console.error("Error in generate-question:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+/**
  * [AESP-41] POST /api/ai/transcribe
  * Tích hợp STT nhận diện file audio -> trả transcript text
  */
