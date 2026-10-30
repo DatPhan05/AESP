@@ -1,4 +1,5 @@
-﻿// src/services/packageService.js
+// [AESP-47] Là học viên, tôi muốn mua một gói học
+// src/services/packageService.js
 const KEY = "aesp_packages_v1";
 
 const DEFAULT_PACKAGES = [
