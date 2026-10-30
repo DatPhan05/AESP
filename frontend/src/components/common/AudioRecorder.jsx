@@ -1,3 +1,4 @@
+// [AESP-52] Component ghi âm (MediaRecorder API, waveform, start/stop/replay)
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 
 const AudioRecorder = forwardRef(function AudioRecorder({
