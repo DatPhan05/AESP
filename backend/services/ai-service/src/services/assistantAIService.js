@@ -1,3 +1,4 @@
+// [AESP-42] Cấu hình OpenRouter + OpenAI GPT (API key, request wrapper)
 /**
  * Assistant AI Service - AI phụ trợ học từ OpenRouter
  * Chạy song song với OpenRouter và học cách phân tích
