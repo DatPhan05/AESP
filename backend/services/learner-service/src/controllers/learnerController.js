@@ -1,4 +1,4 @@
-﻿// Learner Service - Controller
+// Learner Service - Controller
 import * as learnerService from "../services/learnerService.js";
 // TODO: Replace with API calls to AI Service
 // import * as aiService from "../services/aiService.js";

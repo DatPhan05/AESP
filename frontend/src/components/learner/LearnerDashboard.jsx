@@ -1,3 +1,4 @@
+// [AESP-50] Là học viên, tôi muốn thấy màn hình chủ với điểm, streak, gợi ý hôm nay
 // frontend/src/components/learner/LearnerDashboard.jsx
 import React, { useState, useEffect } from "react";
 import { getAuth } from "../../utils/auth";
