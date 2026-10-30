@@ -1,3 +1,4 @@
+// [AESP-49] Xây dựng layout Dashboard Học Viên (Sidebar, Header, responsive)
 // src/components/learner/LearnerLayout.jsx
 import React from "react";
 import { Outlet } from "react-router-dom";
