@@ -32,6 +32,7 @@
     "test:login": "node backend/scripts/test-login.js",
     "test:sprint1": "node backend/scripts/test-sprint1.js",
     "test:sprint2": "node backend/scripts/test-sprint2.js",
+    "test:sprint3": "node backend/scripts/test-sprint3.js",
     "test:sprints": "node backend/scripts/test-runner.js",
     "test:all-sprints": "node backend/scripts/test-runner.js all",
     "generate:learners": "node backend/scripts/generateLearners.js",
